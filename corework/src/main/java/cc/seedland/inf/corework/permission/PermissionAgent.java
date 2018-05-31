@@ -1,9 +1,12 @@
 package cc.seedland.inf.corework.permission;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
 import java.lang.ref.WeakReference;
@@ -22,11 +25,17 @@ public class PermissionAgent {
 
     private int requestCode;
     private WeakReference<Activity> activity;
+    private WeakReference<Fragment> fragment;
     private OnPermissionCallback callback;
 
     public PermissionAgent(Activity activity, int requestCode) {
         this.requestCode = requestCode;
         this.activity = new WeakReference<>(activity);
+    }
+
+    public PermissionAgent(Fragment fragment, int requestCode) {
+        this.requestCode = requestCode;
+        this.fragment = new WeakReference<>(fragment);
     }
 
     public void setCallback(OnPermissionCallback callback) {
@@ -38,6 +47,7 @@ public class PermissionAgent {
      *
      * @param permissions 请求的权限
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void requestPermission(String[] permissions) {
         if (checkPermissions(permissions)) {
             if(callback != null) {
@@ -45,7 +55,12 @@ public class PermissionAgent {
             }
         } else {
             List<String> needPermissions = getDeniedPermissions(permissions);
-            ActivityCompat.requestPermissions(activity.get(), needPermissions.toArray(new String[needPermissions.size()]), requestCode);
+            if(activity != null && activity.get() != null) {
+                ActivityCompat.requestPermissions(activity.get(), needPermissions.toArray(new String[needPermissions.size()]), requestCode);
+            }else if(fragment != null && fragment.get() != null) {
+                fragment.get().requestPermissions(permissions, requestCode);
+            }
+
         }
     }
 
@@ -80,12 +95,22 @@ public class PermissionAgent {
             return true;
         }
 
-        for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(activity.get(), permission) !=
-                    PackageManager.PERMISSION_GRANTED) {
-                return false;
+        Context context = null;
+        if(activity != null && activity.get() != null) {
+            context = activity.get();
+        }else if(fragment != null && fragment.get() != null) {
+            context = fragment.get().getContext();
+        }
+        if(context != null) {
+            for (String permission : permissions) {
+
+                if (ContextCompat.checkSelfPermission(context, permission) !=
+                        PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
             }
         }
+
         return true;
     }
 
@@ -95,15 +120,31 @@ public class PermissionAgent {
      * @param permissions
      * @return
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private List<String> getDeniedPermissions(String[] permissions) {
+        Activity activity = getActivity();
         List<String> needRequestPermissionList = new ArrayList<>();
-        for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(activity.get(), permission) !=
-                    PackageManager.PERMISSION_GRANTED ||
-                    ActivityCompat.shouldShowRequestPermissionRationale(activity.get(), permission)) {
-                needRequestPermissionList.add(permission);
+        if(activity != null) {
+            for (String permission : permissions) {
+                if (ContextCompat.checkSelfPermission(activity, permission) !=
+                        PackageManager.PERMISSION_GRANTED ||
+                        ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
+                    needRequestPermissionList.add(permission);
+                }
             }
         }
+
         return needRequestPermissionList;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
+    private Activity getActivity() {
+        Activity result = null;
+        if(activity != null && activity.get() != null) {
+            result = activity.get();
+        }else if(fragment != null && fragment.get() != null) {
+            result = fragment.get().getActivity();
+        }
+        return result;
     }
 }
