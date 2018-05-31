@@ -26,7 +26,11 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
-    implementation ('cc.seedland.inf:corework:1.0.0-SNAPSHOT@aar') {
-        transitive = true
-    }
+//    implementation ('cc.seedland.inf:corework:1.0.0-SNAPSHOT@aar') {
+//        transitive = true
+//    }
+
+    implementation "com.android.support:design:$support_version"
+
+    implementation project(":corework")
 }
