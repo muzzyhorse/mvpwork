@@ -36,7 +36,6 @@ public abstract class BaseFragment<V extends IBaseView, P extends BasePresenter<
         super.onViewCreated(view, savedInstanceState);
 
         initViews(view);
-        presenter.init();
     }
 
     @Override
