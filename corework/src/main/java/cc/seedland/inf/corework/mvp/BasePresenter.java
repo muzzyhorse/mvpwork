@@ -21,15 +21,10 @@ public abstract class BasePresenter<T extends IBaseView> {
     }
 
     /**
-     * 初始化业务逻辑
-     */
-    public abstract void init();
-
-    /**
      * 清理资源依赖
      * 默认实现，将Presenter与View解除绑定
      */
-    public void destory() {
+    public void destroy() {
         if(view != null) {
             view.clear();
             view = null;

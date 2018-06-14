@@ -1,6 +1,5 @@
 package cc.seedland.inf.corework.mvp;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -31,15 +30,9 @@ public abstract class BaseActivity<V extends IBaseView, P extends BasePresenter<
     }
 
     @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        presenter.init();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-        presenter.destory();
+        presenter.destroy();
     }
 
     @Override
