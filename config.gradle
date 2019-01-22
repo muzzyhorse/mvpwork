@@ -12,7 +12,8 @@ ext {
 
     // corework库构建版本
     corework_version_code = 1
-    corework_version_name = '1.0.2-SNAPSHOT'
+//    corework_version_name = '1.0.2-SNAPSHOT'
+    corework_version_name = '1.0.0'
 
     // 依赖第三方库版本
     support_version = '27.1.0'

@@ -15,7 +15,7 @@ import android.widget.Toast;
  * </pre>
  */
 
-public abstract class BaseActivity<V extends IBaseView, P extends BasePresenter<V>> extends AppCompatActivity implements IBaseView {
+public abstract class BaseActivity<P extends BasePresenter> extends AppCompatActivity implements IBaseView {
 
     protected P presenter;
 
@@ -24,7 +24,7 @@ public abstract class BaseActivity<V extends IBaseView, P extends BasePresenter<
         super.onCreate(savedInstanceState);
 
         setContentView(getLayoutId());
-        presenter = createPresenter((V)this);
+        presenter = createPresenter();
         initViews();
 
     }
@@ -60,7 +60,7 @@ public abstract class BaseActivity<V extends IBaseView, P extends BasePresenter<
      * 创建界面的Presenter实例
      * @return
      */
-    protected abstract P createPresenter(V view);
+    protected abstract P createPresenter();
 
     /**
      * 初始化视图

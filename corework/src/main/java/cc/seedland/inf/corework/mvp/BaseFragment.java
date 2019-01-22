@@ -19,7 +19,7 @@ import android.view.ViewGroup;
  * </pre>
  */
 
-public abstract class BaseFragment<V extends IBaseView, P extends BasePresenter<V>> extends Fragment implements IBaseView {
+public abstract class BaseFragment<P extends BasePresenter> extends Fragment implements IBaseView {
 
     protected P presenter;
 
@@ -44,7 +44,7 @@ public abstract class BaseFragment<V extends IBaseView, P extends BasePresenter<
         if(context instanceof BaseActivity) {
             hostActivity = (BaseActivity)context;
         }
-        presenter = createPresenter((V)this);
+        presenter = createPresenter();
     }
 
     @Override
@@ -70,7 +70,7 @@ public abstract class BaseFragment<V extends IBaseView, P extends BasePresenter<
 
     protected abstract @LayoutRes int getLayoutId();
 
-    protected abstract P createPresenter(V view);
+    protected abstract P createPresenter();
 
     protected void initViews(View view) {
 
